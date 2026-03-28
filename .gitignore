@@ -19,3 +19,9 @@ Thumbs.db
 *.log
 *.tmp
 *.swp
+
+# Temporary files
+temp/
+
+# Local settings
+.claude/settings.local.json
