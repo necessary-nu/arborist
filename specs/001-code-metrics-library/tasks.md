@@ -80,13 +80,13 @@
 
 ### TDD: Fixtures and Tests for US2
 
-- [ ] T022 [US2] Write unit tests that call analyze_source with Rust source strings (reusing fixture content) and assert metrics match the same expected values as file-based analysis in tests/integration/source_analysis.rs. Note: spec US2:AS1 references Python, but Rust is used here because Python profile is not yet available; Python is validated in Phase 5 (T046) when its profile and fixtures are integrated
+- [x] T022 [US2] Write unit tests that call analyze_source with Rust source strings (reusing fixture content) and assert metrics match the same expected values as file-based analysis in tests/source_analysis.rs. Note: spec US2:AS1 references Python, but Rust is used here because Python profile is not yet available; Python is validated in Phase 5 (T046) when its profile and fixtures are integrated
 
 ### Implementation for US2
 
-- [ ] T023 [US2] Implement analyze_source function: accept source string + Language, get LanguageProfile, parse with tree-sitter, walk AST, return FileReport with empty path in src/lib.rs
-- [ ] T024 [US2] Implement analyze_source_with_config function: same as analyze_source but apply AnalysisConfig in src/lib.rs
-- [ ] T025 [US2] Write tests for error cases: unsupported language, syntax errors producing best-effort results in tests/integration/source_analysis.rs
+- [x] T023 [US2] Implement analyze_source function: accept source string + Language, get LanguageProfile, parse with tree-sitter, walk AST, return FileReport with empty path in src/lib.rs
+- [x] T024 [US2] Implement analyze_source_with_config function: same as analyze_source but apply AnalysisConfig in src/lib.rs
+- [x] T025 [US2] Write tests for error cases: unsupported language, syntax errors producing best-effort results in tests/source_analysis.rs
 
 **Checkpoint**: US2 complete. `analyze_source(rust_code, Language::Rust)` produces identical metrics to `analyze_file` for the same code.
 
