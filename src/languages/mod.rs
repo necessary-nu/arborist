@@ -65,6 +65,23 @@ pub trait LanguageProfile {
 
     /// Whether a function node represents a method (inside a class/impl block).
     fn is_method(&self, node: &tree_sitter::Node) -> bool;
+
+    /// AST node types that contain boolean operator children (e.g., `binary_expression`
+    /// for C-like languages, `boolean_operator` for Python). Used by cognitive complexity
+    /// to detect boolean expression chains at the expression level rather than token level.
+    fn boolean_expression_nodes(&self) -> &[&str] {
+        &["binary_expression"]
+    }
+
+    /// AST node types representing function/method calls (for recursion detection).
+    fn call_nodes(&self) -> &[&str] {
+        &["call_expression"]
+    }
+
+    /// Field name on call nodes that contains the called function name.
+    fn call_function_field(&self) -> &str {
+        "function"
+    }
 }
 
 /// Detect language from a file extension and return the corresponding profile.

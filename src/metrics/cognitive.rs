@@ -34,7 +34,6 @@ fn walk_cognitive(
     let nesting_nodes = profile.nesting_nodes();
     let else_if = profile.else_if_nodes();
     let lambda = profile.lambda_nodes();
-    let boolean_ops = profile.boolean_operators();
 
     // Check for direct recursion
     if let Some(fn_name) = function_name {
@@ -43,26 +42,22 @@ fn walk_cognitive(
         }
     }
 
-    // Boolean operator sequences
-    if boolean_ops.contains(&kind) {
-        // Only count at the top of a boolean chain.
-        // If parent is the same boolean operator, skip (already counted).
-        let parent_kind = node.parent().map(|p| p.kind());
-        let is_continuation = parent_kind.is_some_and(|pk| pk == kind);
-
-        if !is_continuation {
-            // +1 for a new boolean sequence
+    // Boolean expression sequences (SonarSource: same-operator chain = +1, each switch = +1)
+    // Work at expression level (binary_expression / boolean_operator) not token level (&&/||)
+    if let Some(op) = get_boolean_op(node, source, profile) {
+        // Check if parent is also a boolean expression → this node is a continuation, skip
+        let parent_op = node.parent().and_then(|p| get_boolean_op(&p, source, profile));
+        if parent_op.is_none() {
+            // Root of boolean chain: +1 for the sequence
             *complexity += 1;
-
-            // Count operator switches within this sequence
-            *complexity += count_operator_switches(node, boolean_ops);
+            // Count operator switches in the subtree
+            *complexity += count_expression_switches(node, source, profile, &op);
         }
 
-        // Don't recurse into children for boolean — handled by switch counting
-        // But we do need to visit non-boolean children
+        // Recurse into non-boolean-expression children only
         let mut cursor = node.walk();
         for child in node.children(&mut cursor) {
-            if !boolean_ops.contains(&child.kind()) {
+            if get_boolean_op(&child, source, profile).is_none() {
                 walk_cognitive(&child, source, profile, nesting, function_name, complexity);
             }
         }
@@ -103,23 +98,41 @@ fn walk_cognitive(
     }
 }
 
-/// Count operator switches within a boolean expression tree.
-/// e.g., `a && b || c` has 1 switch (from && to ||).
-fn count_operator_switches(node: &Node, boolean_ops: &[&str]) -> u64 {
-    let mut switches = 0u64;
+/// Extract the boolean operator from an expression node, if present.
+/// Returns the operator text (e.g., "&&", "or") if the node is a boolean expression,
+/// or None if it's not (e.g., a `binary_expression` with `+` operator).
+fn get_boolean_op(node: &Node, source: &[u8], profile: &dyn LanguageProfile) -> Option<String> {
+    if !profile.boolean_expression_nodes().contains(&node.kind()) {
+        return None;
+    }
+    let boolean_ops = profile.boolean_operators();
     let mut cursor = node.walk();
-
     for child in node.children(&mut cursor) {
-        if boolean_ops.contains(&child.kind()) && child.kind() != node.kind() {
-            switches += 1;
-            // Recurse to find further switches
-            switches += count_operator_switches(&child, boolean_ops);
-        } else if boolean_ops.contains(&child.kind()) {
-            // Same operator, continue chain
-            switches += count_operator_switches(&child, boolean_ops);
+        if boolean_ops.contains(&child.kind()) {
+            return child.utf8_text(source).ok().map(|s| s.to_string());
         }
     }
+    None
+}
 
+/// Count operator switches within a boolean expression tree.
+/// e.g., `a && b || c` has 1 switch (from && to ||).
+fn count_expression_switches(
+    node: &Node,
+    source: &[u8],
+    profile: &dyn LanguageProfile,
+    current_op: &str,
+) -> u64 {
+    let mut switches = 0u64;
+    let mut cursor = node.walk();
+    for child in node.children(&mut cursor) {
+        if let Some(child_op) = get_boolean_op(&child, source, profile) {
+            if child_op != current_op {
+                switches += 1;
+            }
+            switches += count_expression_switches(&child, source, profile, &child_op);
+        }
+    }
     switches
 }
 
@@ -128,13 +141,11 @@ fn is_recursive_call(
     node: &Node,
     source: &[u8],
     function_name: &str,
-    _profile: &dyn LanguageProfile,
+    profile: &dyn LanguageProfile,
 ) -> bool {
-    if node.kind() == "call_expression" || node.kind() == "call" {
-        if let Some(func_node) = node.child_by_field_name("function") {
-            let text = func_node
-                .utf8_text(source)
-                .unwrap_or("");
+    if profile.call_nodes().contains(&node.kind()) {
+        if let Some(func_node) = node.child_by_field_name(profile.call_function_field()) {
+            let text = func_node.utf8_text(source).unwrap_or("");
             return text == function_name;
         }
     }

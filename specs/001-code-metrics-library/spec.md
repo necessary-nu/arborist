@@ -116,17 +116,17 @@ As a tool integrator, I want metric results to be serializable (e.g., to JSON), 
 - What happens when a file contains only comments and no executable code? The report should have zero functions and SLOC of zero.
 - What happens when a function contains deeply nested closures/lambdas? Cognitive complexity should correctly compound nesting penalties. Closures/lambdas do not produce their own FunctionMetrics entries; they only affect the containing function's metrics.
 - What happens when a file has mixed-encoding content? The library should handle UTF-8 source; other encodings should produce a clear error.
-- What happens when a match/switch has many arms? Each arm counts as a decision point for cyclomatic complexity.
+- What happens when a match/switch has many arms? The switch/match construct counts as a single decision point for cyclomatic complexity. **Note**: The SonarSource spec counts per-arm, but the current implementation counts the construct once because `control_flow_nodes` is shared between cognitive and cyclomatic calculators. Per-arm counting is planned for v0.2.0.
 - What happens when boolean expressions chain the same operator (e.g., `a && b && c && d`)? Cognitive complexity counts this as +1 for the whole sequence, not per operator.
 - What happens when boolean expressions mix operators (e.g., `a && b || c`)? Cognitive complexity counts +1 for the first sequence and +1 for each operator change.
-- What happens when `else if` chains are used? They should not increment the nesting level (treated as flat).
+- What happens when `else if` chains are used? In languages with dedicated else-if syntax (Python `elif`, PHP `elseif`), they do not increment the nesting level (treated as flat continuations). In languages where `else if` is syntactically `else { if {} }` (JavaScript, TypeScript, Java, C#, C++, C, Go, Rust), each nested `if` applies standard nesting rules per the AST structure.
 
 ## Requirements *(mandatory)*
 
 ### Functional Requirements
 
 - **FR-001**: The library MUST compute cognitive complexity for each function in a source file, following the SonarSource cognitive complexity specification (G. Ann Campbell, 2017).
-- **FR-002**: The library MUST compute cyclomatic complexity for each function, counting decision points (if, for, while, match arms, boolean operators).
+- **FR-002**: The library MUST compute cyclomatic complexity for each function, counting decision points (if, for, while, match/switch as single construct, boolean operators). See Edge Cases for switch/match per-arm counting status.
 - **FR-003**: The library MUST compute SLOC (Source Lines of Code) for each function, excluding blank lines and comment-only lines.
 - **FR-004**: The library MUST accept a file path as input and automatically detect the programming language from the file extension.
 - **FR-005**: The library MUST accept source code as a string with an explicit language identifier and produce the same metrics as file-based analysis. Both plain and config-accepting variants (`analyze_source`, `analyze_source_with_config`) MUST be provided for parity with file-based analysis.
@@ -136,9 +136,9 @@ As a tool integrator, I want metric results to be serializable (e.g., to JSON), 
 - **FR-009**: The library MUST return structured results containing per-function metrics (name, start line, end line, cognitive complexity, cyclomatic complexity, SLOC) and file-level aggregates. File-level complexity aggregates MUST be the sum of all function-level values. File-level SLOC MUST count all source lines in the file, including code outside functions.
 - **FR-010**: The library MUST support serialization of result structures for interoperability with external tools.
 - **FR-011**: The library MUST allow configuring an optional cognitive complexity threshold. When configured, each FunctionMetrics entry MUST include an `exceeds_threshold` boolean field indicating whether the function's cognitive complexity exceeds the configured value.
-- **FR-012**: The library MUST handle syntax errors gracefully (leveraging tree-sitter's error tolerance) and produce best-effort results without crashing.
+- **FR-012**: The library MUST handle syntax errors gracefully (leveraging tree-sitter's error tolerance) and produce best-effort results without crashing. Best-effort means all parseable function nodes produce metrics; unparseable regions are skipped.
 - **FR-013**: The library MUST return clear, descriptive errors for: file not found, unsupported language, unrecognized file extension, and language feature not enabled.
-- **FR-014**: The library MUST correctly implement cognitive complexity nesting rules: control flow structures increment nesting, `else if` is flat, and lambdas/closures increment nesting.
+- **FR-014**: The library MUST correctly implement cognitive complexity nesting rules: control flow structures increment nesting, `else if` is flat in languages with dedicated syntax (see Edge Cases), and lambdas/closures increment nesting.
 - **FR-015**: The library MUST correctly implement cognitive complexity boolean operator rules: same-operator sequences count as +1, operator changes add additional increments.
 - **FR-016**: The library MUST be usable as an independent crate published on crates.io, with no dependency on DevTrail or any specific framework.
 - **FR-017**: The library MUST use a modular architecture where adding support for a new language requires implementing only a language-specific profile, without modifying core metric computation logic.
@@ -157,10 +157,10 @@ As a tool integrator, I want metric results to be serializable (e.g., to JSON), 
 ### Measurable Outcomes
 
 - **SC-001**: The library correctly computes cognitive complexity for known test cases across all 10 Tier 1 languages, matching reference values from the SonarSource cognitive complexity specification.
-- **SC-002**: Analysis of a typical source file (under 1000 lines) completes in under 100 milliseconds on standard hardware.
+- **SC-002**: Analysis of a typical source file (under 1000 lines) completes in under 100 milliseconds (measured via `cargo bench` or equivalent; hardware baseline: GitHub Actions runner or comparable 2+ vCPU environment).
 - **SC-003**: The library can analyze all 10 Tier 1 languages with consistent accuracy, validated against at least 5 test fixtures per language with pre-calculated expected values.
 - **SC-004**: Adding support for a new language requires implementing only a single language profile component, without changes to core metric calculation logic.
-- **SC-005**: Compiling the library with a single language feature enabled takes under 30 seconds on standard hardware, demonstrating that feature flags effectively reduce compilation scope.
+- **SC-005**: Compiling the library with a single language feature enabled takes under 30 seconds (measured via `cargo build --no-default-features --features rust` on a GitHub Actions runner or comparable 2+ vCPU environment).
 - **SC-006**: The library handles files with syntax errors without crashing, producing partial results for 100% of parseable functions in the file.
 - **SC-007**: All public result structures can be serialized to a standard data interchange format and deserialized back without data loss.
 

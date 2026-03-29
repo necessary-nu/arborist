@@ -39,7 +39,7 @@
 1. **Increment (+1)** for each: `if`, `else if`, `else`, `for`, `while`, `do-while`, `match`/`switch`, `catch`/`except`, `goto`, ternary operator
 2. **Nesting penalty**: Nested control flow adds `nesting_level` instead of just +1. Each nesting level increments by 1.
 3. **Boolean operators**: A sequence of the same operator (`a && b && c`) counts as +1 total. Switching operators (`a && b || c`) adds +1 per switch.
-4. **else-if is flat**: Does not increment nesting level (treated as continuation, not nesting).
+4. **else-if is flat**: Does not increment nesting level (treated as continuation, not nesting). **Language-specific note**: This rule applies only to languages with dedicated else-if syntax nodes (Python `elif_clause`, PHP `else_if_clause`). In C-family languages, tree-sitter parses `else if` as `else_clause` containing a nested `if_expression`/`if_statement`, so standard nesting rules apply.
 5. **Lambdas/closures**: Increment nesting level for their body.
 6. **Recursion**: +1 for direct recursive calls.
 
@@ -55,7 +55,9 @@
 
 **Rationale**: Well-established metric (1976). Every function starts at 1, each decision point adds +1.
 
-**Decision points counted**: `if`, `else if`, `for`, `while`, `do-while`, `match`/`switch` arm (each arm), `catch`/`except`, `&&`, `||`, ternary operator.
+**Decision points counted**: `if`, `else if`, `for`, `while`, `do-while`, `match`/`switch` (as single construct), `catch`/`except`, `&&`, `||`, ternary operator.
+
+**Implementation note**: Switch/match is currently counted as one cyclomatic decision point, not per-arm. Per-arm counting requires separating the cognitive and cyclomatic control flow node lists (they currently share `control_flow_nodes()` from `LanguageProfile`). Deferred to v0.2.0.
 
 **Alternatives considered**:
 - Modified cyclomatic (exclude boolean operators): Less useful for test coverage estimation
