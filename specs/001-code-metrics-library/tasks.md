@@ -104,37 +104,37 @@
 
 > **Create 6 fixtures per language** covering: simple function, nested control flow, mixed boolean operators, else-if chains, closures/lambdas, recursion.
 
-- [ ] T026 [P] [US3] Create 6 Python test fixtures with pre-calculated complexity values in tests/fixtures/python/: simple_function.py, nested_control_flow.py, boolean_operators.py, elif_chain.py, lambda_nested.py, recursion.py
-- [ ] T027 [P] [US3] Create 6 JavaScript test fixtures with pre-calculated complexity values in tests/fixtures/javascript/: simple_function.js, nested_control_flow.js, boolean_operators.js, else_if_chain.js, arrow_functions.js, recursion.js
-- [ ] T028 [P] [US3] Create 6 TypeScript test fixtures with pre-calculated complexity values in tests/fixtures/typescript/: simple_function.ts, nested_control_flow.ts, boolean_operators.ts, else_if_chain.ts, arrow_closures.tsx, recursion.ts
-- [ ] T029 [P] [US3] Create 6 Java test fixtures with pre-calculated complexity values in tests/fixtures/java/: SimpleFunction.java, NestedControlFlow.java, BooleanOperators.java, ElseIfChain.java, LambdaStreams.java, Recursion.java
-- [ ] T030 [P] [US3] Create 6 C# test fixtures with pre-calculated complexity values in tests/fixtures/csharp/: simple_function.cs, nested_control_flow.cs, boolean_operators.cs, else_if_chain.cs, lambda_delegates.cs, recursion.cs
-- [ ] T031 [P] [US3] Create 6 C++ test fixtures with pre-calculated complexity values in tests/fixtures/cpp/: simple_function.cpp, nested_control_flow.cpp, boolean_operators.cpp, else_if_chain.cpp, lambda_captures.cpp, recursion.cpp
-- [ ] T032 [P] [US3] Create 6 C test fixtures with pre-calculated complexity values in tests/fixtures/c/: simple_function.c, nested_control_flow.c, boolean_operators.c, else_if_chain.c, goto_example.c, recursion.c
-- [ ] T033 [P] [US3] Create 6 Go test fixtures with pre-calculated complexity values in tests/fixtures/go/: simple_function.go, nested_control_flow.go, boolean_operators.go, else_if_chain.go, closure_goroutine.go, recursion.go
-- [ ] T034 [P] [US3] Create 6 PHP test fixtures with pre-calculated complexity values in tests/fixtures/php/: simple_function.php, nested_control_flow.php, boolean_operators.php, else_if_chain.php, closure_anonymous.php, recursion.php
+- [x] T026 [P] [US3] Create 6 Python test fixtures with pre-calculated complexity values in tests/fixtures/python/: simple_function.py, nested_control_flow.py, boolean_operators.py, elif_chain.py, lambda_nested.py, recursion.py
+- [x] T027 [P] [US3] Create 6 JavaScript test fixtures with pre-calculated complexity values in tests/fixtures/javascript/: simple_function.js, nested_control_flow.js, boolean_operators.js, else_if_chain.js, arrow_functions.js, recursion.js
+- [x] T028 [P] [US3] Create 6 TypeScript test fixtures with pre-calculated complexity values in tests/fixtures/typescript/: simple_function.ts, nested_control_flow.ts, boolean_operators.ts, else_if_chain.ts, arrow_closures.tsx, recursion.ts
+- [x] T029 [P] [US3] Create 6 Java test fixtures with pre-calculated complexity values in tests/fixtures/java/: SimpleFunction.java, NestedControlFlow.java, BooleanOperators.java, ElseIfChain.java, LambdaStreams.java, Recursion.java
+- [x] T030 [P] [US3] Create 6 C# test fixtures with pre-calculated complexity values in tests/fixtures/csharp/: simple_function.cs, nested_control_flow.cs, boolean_operators.cs, else_if_chain.cs, lambda_delegates.cs, recursion.cs
+- [x] T031 [P] [US3] Create 6 C++ test fixtures with pre-calculated complexity values in tests/fixtures/cpp/: simple_function.cpp, nested_control_flow.cpp, boolean_operators.cpp, else_if_chain.cpp, lambda_captures.cpp, recursion.cpp
+- [x] T032 [P] [US3] Create 6 C test fixtures with pre-calculated complexity values in tests/fixtures/c/: simple_function.c, nested_control_flow.c, boolean_operators.c, else_if_chain.c, goto_example.c, recursion.c
+- [x] T033 [P] [US3] Create 6 Go test fixtures with pre-calculated complexity values in tests/fixtures/go/: simple_function.go, nested_control_flow.go, boolean_operators.go, else_if_chain.go, closure_goroutine.go, recursion.go
+- [x] T034 [P] [US3] Create 6 PHP test fixtures with pre-calculated complexity values in tests/fixtures/php/: simple_function.php, nested_control_flow.php, boolean_operators.php, else_if_chain.php, closure_anonymous.php, recursion.php
 
 ### Implementation: Language Profiles
 
-- [ ] T035 [P] [US3] Implement PythonProfile: function_nodes (function_definition, decorated_definition), control flow nodes, nesting/boolean/elif/lambda/comment mappings, extensions = [".py", ".pyi"] in src/languages/python.rs
-- [ ] T036 [P] [US3] Implement JavaScriptProfile: function_nodes (function_declaration, function_expression, arrow_function, method_definition), control flow nodes, JSX support, extensions = [".js", ".jsx", ".mjs", ".cjs"] in src/languages/javascript.rs
-- [ ] T037 [P] [US3] Implement TypeScriptProfile: extend JavaScript node mappings for TS-specific syntax, extensions = [".ts", ".tsx", ".mts", ".cts"] in src/languages/typescript.rs
-- [ ] T038 [P] [US3] Implement JavaProfile: function_nodes (method_declaration, constructor_declaration), control flow nodes, lambda_expression, extensions = [".java"] in src/languages/java.rs
-- [ ] T039 [P] [US3] Implement CSharpProfile: function_nodes (method_declaration, local_function_statement), control flow nodes, lambda_expression, extensions = [".cs"] in src/languages/csharp.rs
-- [ ] T040 [P] [US3] Implement CppProfile: function_nodes (function_definition), control flow nodes, lambda_expression, extensions = [".cpp", ".cc", ".cxx", ".hpp", ".hxx", ".hh"] in src/languages/cpp.rs
-- [ ] T041 [P] [US3] Implement CProfile: function_nodes (function_definition), control flow nodes (no lambdas), goto node, extensions = [".c", ".h"] in src/languages/c.rs
-- [ ] T042 [P] [US3] Implement GoProfile: function_nodes (function_declaration, method_declaration), control flow nodes, func_literal for closures, extensions = [".go"] in src/languages/go.rs
-- [ ] T043 [P] [US3] Implement PhpProfile: function_nodes (function_definition, method_declaration), control flow nodes, anonymous_function, arrow_function, extensions = [".php"] in src/languages/php.rs
+- [x] T035 [P] [US3] Implement PythonProfile: function_nodes (function_definition, decorated_definition), control flow nodes, nesting/boolean/elif/lambda/comment mappings, extensions = [".py", ".pyi"] in src/languages/python.rs
+- [x] T036 [P] [US3] Implement JavaScriptProfile: function_nodes (function_declaration, function_expression, arrow_function, method_definition), control flow nodes, JSX support, extensions = [".js", ".jsx", ".mjs", ".cjs"] in src/languages/javascript.rs
+- [x] T037 [P] [US3] Implement TypeScriptProfile: extend JavaScript node mappings for TS-specific syntax, extensions = [".ts", ".tsx", ".mts", ".cts"] in src/languages/typescript.rs
+- [x] T038 [P] [US3] Implement JavaProfile: function_nodes (method_declaration, constructor_declaration), control flow nodes, lambda_expression, extensions = [".java"] in src/languages/java.rs
+- [x] T039 [P] [US3] Implement CSharpProfile: function_nodes (method_declaration, local_function_statement), control flow nodes, lambda_expression, extensions = [".cs"] in src/languages/csharp.rs
+- [x] T040 [P] [US3] Implement CppProfile: function_nodes (function_definition), control flow nodes, lambda_expression, extensions = [".cpp", ".cc", ".cxx", ".hpp", ".hxx", ".hh"] in src/languages/cpp.rs
+- [x] T041 [P] [US3] Implement CProfile: function_nodes (function_definition), control flow nodes (no lambdas), goto node, extensions = [".c", ".h"] in src/languages/c.rs
+- [x] T042 [P] [US3] Implement GoProfile: function_nodes (function_declaration, method_declaration), control flow nodes, func_literal for closures, extensions = [".go"] in src/languages/go.rs
+- [x] T043 [P] [US3] Implement PhpProfile: function_nodes (function_definition, method_declaration), control flow nodes, anonymous_function, arrow_function, extensions = [".php"] in src/languages/php.rs
 
 ### Implementation: Feature Flags & Detection
 
-- [ ] T044 [US5] Add cfg-gate attributes to all language profile modules and language detection match arms, ensuring LanguageNotEnabled error when feature is off in src/languages/mod.rs
-- [ ] T045 [US5] Write tests: compile with subset of features, verify enabled languages work and disabled languages return LanguageNotEnabled in tests/feature_flags.rs
+- [x] T044 [US5] Add cfg-gate attributes to all language profile modules and language detection match arms, ensuring LanguageNotEnabled error when feature is off in src/languages/mod.rs
+- [x] T045 [US5] Write tests: compile with subset of features, verify enabled languages work and disabled languages return LanguageNotEnabled in tests/feature_flags.rs
 
 ### Integration Tests for All Languages
 
-- [ ] T046 [US3] Write integration tests for all 9 new languages: analyze each fixture file and assert metrics match expected values in tests/ (one test file per language: python_analysis.rs, javascript_analysis.rs, etc.)
-- [ ] T047 [US3] Write language detection tests: verify all extensions map to correct Language variant, unknown extensions return UnrecognizedExtension, .h defaults to C in tests/language_detection.rs
+- [x] T046 [US3] Write integration tests for all 9 new languages: analyze each fixture file and assert metrics match expected values in tests/ (one test file per language: python_analysis.rs, javascript_analysis.rs, etc.)
+- [x] T047 [US3] Write language detection tests: verify all extensions map to correct Language variant, unknown extensions return UnrecognizedExtension, .h defaults to C in tests/language_detection.rs
 
 **Checkpoint**: All 10 Tier 1 languages analyzed correctly. Feature flags gate compilation. Extension detection complete.
 
