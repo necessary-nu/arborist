@@ -4,39 +4,59 @@ pub struct PhpProfile;
 
 impl LanguageProfile for PhpProfile {
     fn function_nodes(&self) -> &[&str] {
-        &[]
+        &["function_definition", "method_declaration"]
     }
 
     fn control_flow_nodes(&self) -> &[&str] {
-        &[]
+        &[
+            "if_statement",
+            "for_statement",
+            "foreach_statement",
+            "while_statement",
+            "do_statement",
+            "switch_statement",
+            "catch_clause",
+            "else_if_clause",
+            "else_clause",
+            "conditional_expression",
+        ]
     }
 
     fn nesting_nodes(&self) -> &[&str] {
-        &[]
+        &[
+            "if_statement",
+            "for_statement",
+            "foreach_statement",
+            "while_statement",
+            "do_statement",
+            "switch_statement",
+        ]
     }
 
     fn boolean_operators(&self) -> &[&str] {
-        &[]
+        &["&&", "||"]
     }
 
     fn else_if_nodes(&self) -> &[&str] {
-        &[]
+        &["else_if_clause"]
     }
 
     fn lambda_nodes(&self) -> &[&str] {
-        &[]
+        &["anonymous_function", "arrow_function"]
     }
 
     fn comment_nodes(&self) -> &[&str] {
-        &[]
+        &["comment"]
     }
 
     fn extract_function_name(
         &self,
-        _node: &tree_sitter::Node,
-        _source: &[u8],
+        node: &tree_sitter::Node,
+        source: &[u8],
     ) -> Option<String> {
-        None
+        node.child_by_field_name("name")
+            .and_then(|n| n.utf8_text(source).ok())
+            .map(|s| s.to_string())
     }
 
     fn parser_language(&self) -> tree_sitter::Language {
@@ -47,7 +67,18 @@ impl LanguageProfile for PhpProfile {
         &[".php"]
     }
 
-    fn is_method(&self, _node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, node: &tree_sitter::Node) -> bool {
+        let mut current = node.parent();
+        while let Some(parent) = current {
+            if parent.kind() == "declaration_list" {
+                return true;
+            }
+            current = parent.parent();
+        }
         false
+    }
+
+    fn call_nodes(&self) -> &[&str] {
+        &["function_call_expression"]
     }
 }

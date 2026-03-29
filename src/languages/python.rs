@@ -4,39 +4,48 @@ pub struct PythonProfile;
 
 impl LanguageProfile for PythonProfile {
     fn function_nodes(&self) -> &[&str] {
-        &[]
+        &["function_definition"]
     }
 
     fn control_flow_nodes(&self) -> &[&str] {
-        &[]
+        &[
+            "if_statement",
+            "for_statement",
+            "while_statement",
+            "elif_clause",
+            "else_clause",
+            "except_clause",
+        ]
     }
 
     fn nesting_nodes(&self) -> &[&str] {
-        &[]
+        &["if_statement", "for_statement", "while_statement"]
     }
 
     fn boolean_operators(&self) -> &[&str] {
-        &[]
+        &["and", "or"]
     }
 
     fn else_if_nodes(&self) -> &[&str] {
-        &[]
+        &["elif_clause"]
     }
 
     fn lambda_nodes(&self) -> &[&str] {
-        &[]
+        &["lambda"]
     }
 
     fn comment_nodes(&self) -> &[&str] {
-        &[]
+        &["comment"]
     }
 
     fn extract_function_name(
         &self,
-        _node: &tree_sitter::Node,
-        _source: &[u8],
+        node: &tree_sitter::Node,
+        source: &[u8],
     ) -> Option<String> {
-        None
+        node.child_by_field_name("name")
+            .and_then(|n| n.utf8_text(source).ok())
+            .map(|s| s.to_string())
     }
 
     fn parser_language(&self) -> tree_sitter::Language {
@@ -47,7 +56,22 @@ impl LanguageProfile for PythonProfile {
         &[".py", ".pyi"]
     }
 
-    fn is_method(&self, _node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, node: &tree_sitter::Node) -> bool {
+        let mut current = node.parent();
+        while let Some(parent) = current {
+            if parent.kind() == "class_definition" {
+                return true;
+            }
+            current = parent.parent();
+        }
         false
+    }
+
+    fn boolean_expression_nodes(&self) -> &[&str] {
+        &["boolean_operator"]
+    }
+
+    fn call_nodes(&self) -> &[&str] {
+        &["call"]
     }
 }

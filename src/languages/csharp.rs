@@ -4,19 +4,40 @@ pub struct CSharpProfile;
 
 impl LanguageProfile for CSharpProfile {
     fn function_nodes(&self) -> &[&str] {
-        &[]
+        &[
+            "method_declaration",
+            "local_function_statement",
+            "constructor_declaration",
+        ]
     }
 
     fn control_flow_nodes(&self) -> &[&str] {
-        &[]
+        &[
+            "if_statement",
+            "for_statement",
+            "foreach_statement",
+            "while_statement",
+            "do_statement",
+            "switch_statement",
+            "catch_clause",
+            "conditional_expression",
+            "else",
+        ]
     }
 
     fn nesting_nodes(&self) -> &[&str] {
-        &[]
+        &[
+            "if_statement",
+            "for_statement",
+            "foreach_statement",
+            "while_statement",
+            "do_statement",
+            "switch_statement",
+        ]
     }
 
     fn boolean_operators(&self) -> &[&str] {
-        &[]
+        &["&&", "||"]
     }
 
     fn else_if_nodes(&self) -> &[&str] {
@@ -24,19 +45,21 @@ impl LanguageProfile for CSharpProfile {
     }
 
     fn lambda_nodes(&self) -> &[&str] {
-        &[]
+        &["lambda_expression"]
     }
 
     fn comment_nodes(&self) -> &[&str] {
-        &[]
+        &["comment"]
     }
 
     fn extract_function_name(
         &self,
-        _node: &tree_sitter::Node,
-        _source: &[u8],
+        node: &tree_sitter::Node,
+        source: &[u8],
     ) -> Option<String> {
-        None
+        node.child_by_field_name("name")
+            .and_then(|n| n.utf8_text(source).ok())
+            .map(|s| s.to_string())
     }
 
     fn parser_language(&self) -> tree_sitter::Language {
@@ -47,7 +70,18 @@ impl LanguageProfile for CSharpProfile {
         &[".cs"]
     }
 
-    fn is_method(&self, _node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, node: &tree_sitter::Node) -> bool {
+        let mut current = node.parent();
+        while let Some(parent) = current {
+            if parent.kind() == "declaration_list" {
+                return true;
+            }
+            current = parent.parent();
+        }
         false
+    }
+
+    fn call_nodes(&self) -> &[&str] {
+        &["invocation_expression"]
     }
 }

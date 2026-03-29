@@ -4,19 +4,36 @@ pub struct JavaProfile;
 
 impl LanguageProfile for JavaProfile {
     fn function_nodes(&self) -> &[&str] {
-        &[]
+        &["method_declaration", "constructor_declaration"]
     }
 
     fn control_flow_nodes(&self) -> &[&str] {
-        &[]
+        &[
+            "if_statement",
+            "for_statement",
+            "enhanced_for_statement",
+            "while_statement",
+            "do_statement",
+            "switch_expression",
+            "catch_clause",
+            "ternary_expression",
+            "else",
+        ]
     }
 
     fn nesting_nodes(&self) -> &[&str] {
-        &[]
+        &[
+            "if_statement",
+            "for_statement",
+            "enhanced_for_statement",
+            "while_statement",
+            "do_statement",
+            "switch_expression",
+        ]
     }
 
     fn boolean_operators(&self) -> &[&str] {
-        &[]
+        &["&&", "||"]
     }
 
     fn else_if_nodes(&self) -> &[&str] {
@@ -24,19 +41,21 @@ impl LanguageProfile for JavaProfile {
     }
 
     fn lambda_nodes(&self) -> &[&str] {
-        &[]
+        &["lambda_expression"]
     }
 
     fn comment_nodes(&self) -> &[&str] {
-        &[]
+        &["line_comment", "block_comment"]
     }
 
     fn extract_function_name(
         &self,
-        _node: &tree_sitter::Node,
-        _source: &[u8],
+        node: &tree_sitter::Node,
+        source: &[u8],
     ) -> Option<String> {
-        None
+        node.child_by_field_name("name")
+            .and_then(|n| n.utf8_text(source).ok())
+            .map(|s| s.to_string())
     }
 
     fn parser_language(&self) -> tree_sitter::Language {
@@ -48,6 +67,14 @@ impl LanguageProfile for JavaProfile {
     }
 
     fn is_method(&self, _node: &tree_sitter::Node) -> bool {
-        false
+        true
+    }
+
+    fn call_nodes(&self) -> &[&str] {
+        &["method_invocation"]
+    }
+
+    fn call_function_field(&self) -> &str {
+        "name"
     }
 }

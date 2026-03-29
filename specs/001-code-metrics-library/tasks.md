@@ -36,7 +36,7 @@
 - [x] T006 [P] Define FileReport struct with fields: path (String), language (Language), functions (Vec\<FunctionMetrics\>), file_cognitive (u64), file_cyclomatic (u64), file_sloc (u64) with Serialize/Deserialize derives in src/types.rs
 - [x] T007 [P] Define AnalysisConfig struct with fields: cognitive_threshold (Option\<u64\>), include_methods (bool, default true) with Default impl in src/types.rs
 - [x] T008 Define ArboristError enum with variants FileNotFound, UnsupportedLanguage, UnrecognizedExtension, LanguageNotEnabled, ParseError, Io per research.md R5, implement Display and std::error::Error in src/error.rs. Document in the Io variant's doc comment that non-UTF-8 files surface as Io(std::io::Error) with ErrorKind::InvalidData since std::fs::read_to_string enforces UTF-8
-- [x] T009 Define LanguageProfile trait with methods: function_nodes, control_flow_nodes, nesting_nodes, boolean_operators, else_if_nodes, lambda_nodes, comment_nodes, extract_function_name, language, extensions per research.md R7 in src/languages/mod.rs
+- [x] T009 Define LanguageProfile trait with methods: function_nodes, control_flow_nodes, nesting_nodes, boolean_operators, else_if_nodes, lambda_nodes, comment_nodes, extract_function_name, parser_language, extensions, is_method, boolean_expression_nodes, call_nodes, call_function_field per research.md R7 in src/languages/mod.rs
 - [x] T010 Implement cognitive complexity calculator: traverse AST nodes, apply SonarSource rules (increment per control flow, nesting penalty, boolean operator sequences, flat else-if, lambda nesting) per research.md R2 in src/metrics/cognitive.rs
 - [x] T011 [P] Implement cyclomatic complexity calculator: count decision points (if, for, while, match arms, boolean operators) with base of 1 per research.md R3 in src/metrics/cyclomatic.rs
 - [x] T012 [P] Implement SLOC counter: count source lines excluding blank and comment-only lines using comment_nodes from LanguageProfile per research.md R4 in src/metrics/loc.rs
@@ -58,7 +58,7 @@
 > **Constitution Principle VI**: Write fixtures FIRST, ensure tests FAIL before implementation.
 
 - [x] T015 [P] [US1] Create 6 Rust test fixture files with pre-calculated complexity values in tests/fixtures/rust/: simple_function.rs (1 function, cognitive=0), nested_control_flow.rs (nested if/for/while, cognitive=6+), boolean_operators.rs (mixed && and ||), else_if_chain.rs (flat else-if), closures_lambdas.rs (closures incrementing nesting), recursion.rs (direct recursive call, +1 per SonarSource spec)
-- [x] T016 [US1] Write integration tests that analyze each Rust fixture file and assert exact cognitive, cyclomatic, and SLOC values match pre-calculated expectations in tests/integration/rust_analysis.rs
+- [x] T016 [US1] Write integration tests that analyze each Rust fixture file and assert exact cognitive, cyclomatic, and SLOC values match pre-calculated expectations in tests/rust_analysis.rs
 
 ### Implementation for US1
 
@@ -66,7 +66,7 @@
 - [x] T018 [US1] Implement language detection: from_extension function that maps file extensions to Language enum and returns the corresponding LanguageProfile, with cfg-gated language availability in src/languages/mod.rs
 - [x] T019 [US1] Implement analyze_file function: read file from path, detect language from extension, parse with tree-sitter, walk AST, return FileReport. Handle errors per FR-013 in src/lib.rs
 - [x] T020 [US1] Implement analyze_file_with_config function: same as analyze_file but accept and pass AnalysisConfig to walker. Note: threshold logic (exceeds_threshold population) is a no-op until T049 (US4) implements it in the walker; this task only wires the config through in src/lib.rs
-- [x] T021 [US1] Write integration tests for error cases: file not found, unknown extension, empty file in tests/integration/error_cases.rs
+- [x] T021 [US1] Write integration tests for error cases: file not found, unknown extension, empty file in tests/error_cases.rs
 
 **Checkpoint**: US1 complete. `analyze_file("tests/fixtures/rust/nested_control_flow.rs")` returns correct FileReport with all metrics.
 
@@ -148,13 +148,13 @@
 
 ### TDD: Tests for US4
 
-- [ ] T048 [US4] Write tests: analyze Rust fixtures with cognitive_threshold=8, verify exceeds_threshold is Some(true) for complex functions and Some(false) for simple ones. Verify exceeds_threshold is None when no threshold configured in tests/threshold_tests.rs
-- [ ] T048b [US4] Write tests: analyze a Java fixture containing a class with methods using include_methods=false, verify only top-level functions appear in report. Verify include_methods=true (default) includes methods in tests/config_tests.rs
+- [x] T048 [US4] Write tests: analyze Rust fixtures with cognitive_threshold=8, verify exceeds_threshold is Some(true) for complex functions and Some(false) for simple ones. Verify exceeds_threshold is None when no threshold configured in tests/threshold_tests.rs
+- [x] T048b [US4] Write tests: analyze a Java fixture containing a class with methods using include_methods=false, verify only top-level functions appear in report. Verify include_methods=true (default) includes methods in tests/config_tests.rs
 
 ### Implementation for US4
 
-- [ ] T049 [US4] Implement threshold logic: after computing metrics, if AnalysisConfig.cognitive_threshold is Some(n), set exceeds_threshold = Some(func.cognitive > n) on each FunctionMetrics in src/walker.rs
-- [ ] T049b [US4] Implement include_methods filtering: in the walker, when AnalysisConfig.include_methods is false, skip function nodes that are methods (determined by LanguageProfile context — e.g., nodes inside impl blocks, class bodies) per FR-018 in src/walker.rs
+- [x] T049 [US4] Implement threshold logic: after computing metrics, if AnalysisConfig.cognitive_threshold is Some(n), set exceeds_threshold = Some(func.cognitive > n) on each FunctionMetrics in src/walker.rs
+- [x] T049b [US4] Implement include_methods filtering: in the walker, when AnalysisConfig.include_methods is false, skip function nodes that are methods (determined by LanguageProfile context — e.g., nodes inside impl blocks, class bodies) per FR-018 in src/walker.rs
 
 **Checkpoint**: US4 complete. Threshold configuration correctly flags functions. Method filtering works.
 
@@ -172,7 +172,7 @@
 
 ### Implementation for US6
 
-- [ ] T051 [US6] Add PartialEq and Eq derives on all public types (FunctionMetrics, FileReport, Language, AnalysisConfig, ArboristError) needed for round-trip test assertions. Verify existing Serialize/Deserialize derives (added in Phase 2) are complete and correct in src/types.rs and src/error.rs
+- [ ] T051 [US6] Verify PartialEq/Eq derives on all public types (already present on FunctionMetrics, FileReport, Language, AnalysisConfig from Phase 2). Add PartialEq/Eq to ArboristError if needed for round-trip assertions. Verify Serialize/Deserialize derives are complete in src/types.rs and src/error.rs
 
 **Checkpoint**: US6 complete. All results round-trip through JSON without data loss.
 
