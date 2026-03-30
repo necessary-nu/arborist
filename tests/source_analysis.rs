@@ -1,3 +1,4 @@
+// Most tests require "rust"; Python-specific tests are individually gated.
 #![cfg(feature = "rust")]
 
 use arborist::{analyze_file, analyze_source, analyze_source_with_config, AnalysisConfig, Language};
@@ -128,6 +129,37 @@ fn source_with_config_default_matches_no_config() {
         report_no_config.functions[0].exceeds_threshold,
         report_with_config.functions[0].exceeds_threshold
     );
+}
+
+// --- I2 remediation: Python-based US2 test (spec US2:AS1) ---
+
+#[cfg(feature = "python")]
+#[test]
+fn source_python_two_functions() {
+    // Spec US2:AS1: "Given a Python source string containing 2 functions with known
+    // complexity, When the user calls the source analysis function specifying Python,
+    // Then the report contains exactly 2 function entries with correct metrics."
+    let source = concat!(
+        include_str!("fixtures/python/simple_function.py"),
+        "\n",
+        include_str!("fixtures/python/nested_control_flow.py"),
+    );
+    let report = analyze_source(source, Language::Python).unwrap();
+
+    assert_eq!(report.language, Language::Python);
+    assert_eq!(report.path, "", "analyze_source should produce empty path");
+    assert_eq!(report.functions.len(), 2, "expected 2 functions (add + process)");
+
+    let add = &report.functions[0];
+    assert_eq!(add.name, "add");
+    assert_eq!(add.cognitive, 0);
+    assert_eq!(add.cyclomatic, 1);
+    assert_eq!(add.sloc, 3);
+
+    let process = &report.functions[1];
+    assert_eq!(process.name, "process");
+    assert_eq!(process.cognitive, 6);
+    assert_eq!(process.cyclomatic, 4);
 }
 
 // --- T025: Error cases for analyze_source ---

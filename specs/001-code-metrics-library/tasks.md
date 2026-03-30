@@ -168,11 +168,11 @@
 
 ### TDD: Tests for US6
 
-- [ ] T050 [US6] Write serialization round-trip tests: analyze a fixture, serialize FileReport to JSON, deserialize back, assert equality. Verify all fields (name, lines, metrics, exceeds_threshold, language) are preserved in tests/serialization_tests.rs
+- [x] T050 [US6] Write serialization round-trip tests: analyze a fixture, serialize FileReport to JSON, deserialize back, assert equality. Verify all fields (name, lines, metrics, exceeds_threshold, language) are preserved in tests/serialization_tests.rs
 
 ### Implementation for US6
 
-- [ ] T051 [US6] Verify PartialEq/Eq derives on all public types (already present on FunctionMetrics, FileReport, Language, AnalysisConfig from Phase 2). Add PartialEq/Eq to ArboristError if needed for round-trip assertions. Verify Serialize/Deserialize derives are complete in src/types.rs and src/error.rs
+- [x] T051 [US6] Verify PartialEq/Eq derives on all public types (already present on FunctionMetrics, FileReport, Language, AnalysisConfig from Phase 2). Add PartialEq/Eq to ArboristError if needed for round-trip assertions. Verify Serialize/Deserialize derives are complete in src/types.rs and src/error.rs
 
 **Checkpoint**: US6 complete. All results round-trip through JSON without data loss.
 

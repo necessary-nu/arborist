@@ -106,8 +106,8 @@ As a tool integrator, I want metric results to be serializable (e.g., to JSON), 
 
 **Acceptance Scenarios**:
 
-1. **Given** a file analysis report, **When** the consumer serializes it, **Then** the output contains all function names, metrics, and file-level aggregates.
-2. **Given** a report with multiple functions, **When** serialized, **Then** the line number information (start and end) is preserved for each function.
+1. **Given** a file analysis report, **When** the consumer serializes it to JSON via serde, **Then** the output contains all function names, metrics, and file-level aggregates.
+2. **Given** a report with multiple functions, **When** serialized to JSON and deserialized back, **Then** all fields (including line numbers, language, and exceeds_threshold) are preserved without data loss.
 
 ---
 
@@ -134,7 +134,7 @@ As a tool integrator, I want metric results to be serializable (e.g., to JSON), 
 - **FR-007**: The library MUST allow each language to be enabled or disabled independently via compile-time feature flags.
 - **FR-008**: The library MUST provide a sensible set of default features (a subset of supported languages) to minimize compilation time for common use cases.
 - **FR-009**: The library MUST return structured results containing per-function metrics (name, start line, end line, cognitive complexity, cyclomatic complexity, SLOC) and file-level aggregates. File-level complexity aggregates MUST be the sum of all function-level values. File-level SLOC MUST count all source lines in the file, including code outside functions.
-- **FR-010**: The library MUST support serialization of result structures for interoperability with external tools.
+- **FR-010**: The library MUST support serialization of result structures via serde, with JSON as the primary validated format. Serde's design allows consumers to use any compatible format (TOML, MessagePack, etc.) without library changes.
 - **FR-011**: The library MUST allow configuring an optional cognitive complexity threshold. When configured, each FunctionMetrics entry MUST include an `exceeds_threshold` boolean field indicating whether the function's cognitive complexity exceeds the configured value.
 - **FR-012**: The library MUST handle syntax errors gracefully (leveraging tree-sitter's error tolerance) and produce best-effort results without crashing. Best-effort means all parseable function nodes produce metrics; unparseable regions are skipped.
 - **FR-013**: The library MUST return clear, descriptive errors for: file not found, unsupported language, unrecognized file extension, and language feature not enabled.
@@ -162,7 +162,7 @@ As a tool integrator, I want metric results to be serializable (e.g., to JSON), 
 - **SC-004**: Adding support for a new language requires implementing only a single language profile component, without changes to core metric calculation logic.
 - **SC-005**: Compiling the library with a single language feature enabled takes under 30 seconds (measured via `cargo build --no-default-features --features rust` on a GitHub Actions runner or comparable 2+ vCPU environment).
 - **SC-006**: The library handles files with syntax errors without crashing, producing partial results for 100% of parseable functions in the file.
-- **SC-007**: All public result structures can be serialized to a standard data interchange format and deserialized back without data loss.
+- **SC-007**: All public result structures can be serialized to JSON (primary validated format) and deserialized back without data loss. Serde compatibility enables other formats without library changes.
 
 ## Assumptions
 
