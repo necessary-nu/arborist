@@ -1,3 +1,14 @@
+//! Language profiles for tree-sitter grammars.
+//!
+//! Each language module is gated behind a Cargo feature flag. By default,
+//! **Tier 1** languages are enabled: Rust, Python, JavaScript, TypeScript,
+//! Java, and Go. Use the `all` feature to enable all 12 languages
+//! (including Tier 2: C#, C++, C, PHP, Kotlin, Swift), or enable
+//! individual languages by name (e.g., `features = ["kotlin"]`).
+//!
+//! If you attempt to analyze code in a language whose feature is not
+//! enabled, [`ArboristError::LanguageNotEnabled`] is returned.
+
 use crate::error::ArboristError;
 use crate::types::Language;
 

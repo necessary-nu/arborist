@@ -67,3 +67,7 @@ go = ["dep:tree-sitter-go"]
 php = ["dep:tree-sitter-php"]
 kotlin = ["dep:tree-sitter-kotlin-ng"]
 swift = ["dep:tree-sitter-swift"]
+
+[package.metadata.docs.rs]
+all-features = true
+rustdoc-args = ["--cfg", "docsrs"]

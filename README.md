@@ -8,27 +8,71 @@ Arborist computes **cognitive complexity** (SonarSource), **cyclomatic complexit
 
 ## Supported Languages
 
-| Language | Feature flag | Extensions |
-|----------|-------------|------------|
-| Rust | `rust` | `.rs` |
-| Python | `python` | `.py`, `.pyi` |
-| JavaScript | `javascript` | `.js`, `.jsx`, `.mjs`, `.cjs` |
-| TypeScript | `typescript` | `.ts`, `.tsx`, `.mts`, `.cts` |
-| Java | `java` | `.java` |
-| Go | `go` | `.go` |
-| C# | `csharp` | `.cs` |
-| C++ | `cpp` | `.cpp`, `.cc`, `.cxx`, `.hpp`, `.hxx`, `.hh` |
-| C | `c` | `.c`, `.h` |
-| PHP | `php` | `.php` |
-| Kotlin | `kotlin` | `.kt`, `.kts` |
-| Swift | `swift` | `.swift` |
+| Language | Feature flag | Extensions | Default |
+|----------|-------------|------------|---------|
+| Rust | `rust` | `.rs` | Yes |
+| Python | `python` | `.py`, `.pyi` | Yes |
+| JavaScript | `javascript` | `.js`, `.jsx`, `.mjs`, `.cjs` | Yes |
+| TypeScript | `typescript` | `.ts`, `.tsx`, `.mts`, `.cts` | Yes |
+| Java | `java` | `.java` | Yes |
+| Go | `go` | `.go` | Yes |
+| C# | `csharp` | `.cs` | Opt-in |
+| C++ | `cpp` | `.cpp`, `.cc`, `.cxx`, `.hpp`, `.hxx`, `.hh` | Opt-in |
+| C | `c` | `.c`, `.h` | Opt-in |
+| PHP | `php` | `.php` | Opt-in |
+| Kotlin | `kotlin` | `.kt`, `.kts` | Opt-in |
+| Swift | `swift` | `.swift` | Opt-in |
+
+## Feature Flags
+
+Arborist uses **Cargo feature flags** to control which tree-sitter grammars
+are compiled. Each language is an independent, optional feature that pulls in
+its corresponding tree-sitter grammar crate.
+
+**To enable all 12 languages, use `features = ["all"]`.**
+
+### Tiers
+
+- **Tier 1 (default):** Rust, Python, JavaScript, TypeScript, Java, Go --
+  the most mature tree-sitter grammars. Enabled automatically unless you
+  set `default-features = false`.
+- **Tier 2 (opt-in):** C#, C++, C, PHP, Kotlin, Swift -- require enabling
+  their feature flag explicitly or using the `all` composite feature.
+
+### Individual features
+
+| Feature flag | Language | Tier | tree-sitter crate |
+|-------------|----------|------|-------------------|
+| `rust` | Rust | 1 | `tree-sitter-rust` |
+| `python` | Python | 1 | `tree-sitter-python` |
+| `javascript` | JavaScript | 1 | `tree-sitter-javascript` |
+| `typescript` | TypeScript | 1 | `tree-sitter-typescript` |
+| `java` | Java | 1 | `tree-sitter-java` |
+| `go` | Go | 1 | `tree-sitter-go` |
+| `csharp` | C# | 2 | `tree-sitter-c-sharp` |
+| `cpp` | C++ | 2 | `tree-sitter-cpp` |
+| `c` | C | 2 | `tree-sitter-c` |
+| `php` | PHP | 2 | `tree-sitter-php` |
+| `kotlin` | Kotlin | 2 | `tree-sitter-kotlin-ng` |
+| `swift` | Swift | 2 | `tree-sitter-swift` |
+
+### Composite features
+
+| Feature | Expands to |
+|---------|-----------|
+| `default` | `rust`, `python`, `javascript`, `typescript`, `java`, `go` |
+| `all` | All 12 languages (`default` + `csharp`, `cpp`, `c`, `php`, `kotlin`, `swift`) |
+
+> **Compile-time note:** Each grammar adds compile time and binary size.
+> Use `default-features = false` with only the languages you need for
+> minimal builds, or `all` when you need broad language coverage.
 
 ## Installation
 
 Add to your `Cargo.toml`:
 
 ```toml
-# Default features: Rust, Python, JavaScript, TypeScript, Java, Go
+# Default features (Tier 1): Rust, Python, JavaScript, TypeScript, Java, Go
 [dependencies]
 arborist-metrics = "0.1"
 ```
@@ -46,14 +90,6 @@ Enable all 12 languages:
 [dependencies]
 arborist-metrics = { version = "0.1", features = ["all"] }
 ```
-
-## Feature Flags
-
-| Flag | Includes |
-|------|----------|
-| `default` | `rust`, `python`, `javascript`, `typescript`, `java`, `go` |
-| `all` | All 12 languages (Tier 1 + Tier 2) |
-| Individual | One language each (e.g., `rust`, `python`, `csharp`) |
 
 ## Quick Start
 
