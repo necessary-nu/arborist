@@ -32,6 +32,16 @@ pub enum ArboristError {
     /// The file extension does not map to any known language.
     UnrecognizedExtension { extension: String },
     /// The language is recognized but its compile-time feature flag is not enabled.
+    ///
+    /// Enable it in your `Cargo.toml` — either individually or via the `all` feature:
+    ///
+    /// ```toml
+    /// # Enable all 12 languages
+    /// arborist-metrics = { version = "0.1", features = ["all"] }
+    ///
+    /// # Or enable only the language you need
+    /// arborist-metrics = { version = "0.1", features = ["kotlin"] }
+    /// ```
     LanguageNotEnabled { language: String },
     /// tree-sitter failed to parse the source (rare due to error tolerance).
     ParseError { details: String },
