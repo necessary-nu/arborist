@@ -10,29 +10,25 @@ pub fn walk_source(
     profile: &dyn LanguageProfile,
     config: &AnalysisConfig,
 ) -> Result<FileReport, ArboristError> {
-    let mut parser = tree_sitter::Parser::new();
+    let mut parser = arborium::tree_sitter::Parser::new();
     parser
         .set_language(&profile.parser_language())
         .map_err(|e| ArboristError::ParseError {
             details: format!("failed to set parser language: {e}"),
         })?;
 
-    let tree = parser.parse(source, None).ok_or_else(|| ArboristError::ParseError {
-        details: "tree-sitter returned no parse tree".to_string(),
-    })?;
+    let tree = parser
+        .parse(source, None)
+        .ok_or_else(|| ArboristError::ParseError {
+            details: "arborium returned no parse tree".to_string(),
+        })?;
 
     let root = tree.root_node();
     let source_bytes = source.as_bytes();
 
     // Collect function nodes
     let mut functions = Vec::new();
-    collect_functions(
-        &root,
-        source_bytes,
-        profile,
-        config,
-        &mut functions,
-    );
+    collect_functions(&root, source_bytes, profile, config, &mut functions);
 
     // Sort by start line
     functions.sort_by_key(|f| f.start_line);
@@ -53,7 +49,7 @@ pub fn walk_source(
 }
 
 fn collect_functions(
-    node: &tree_sitter::Node,
+    node: &arborium::tree_sitter::Node,
     source: &[u8],
     profile: &dyn LanguageProfile,
     config: &AnalysisConfig,

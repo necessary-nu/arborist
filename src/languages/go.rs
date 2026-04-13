@@ -46,7 +46,7 @@ impl LanguageProfile for GoProfile {
 
     fn extract_function_name(
         &self,
-        node: &tree_sitter::Node,
+        node: &arborium::tree_sitter::Node,
         source: &[u8],
     ) -> Option<String> {
         node.child_by_field_name("name")
@@ -54,23 +54,32 @@ impl LanguageProfile for GoProfile {
             .map(|s| s.to_string())
     }
 
-    fn parser_language(&self) -> tree_sitter::Language {
-        tree_sitter_go::LANGUAGE.into()
+    fn parser_language(&self) -> arborium::tree_sitter::Language {
+        arborium::lang_go::language().into()
     }
 
     fn extensions(&self) -> &[&str] {
         &[".go"]
     }
 
-    fn is_method(&self, node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, node: &arborium::tree_sitter::Node) -> bool {
         node.kind() == "method_declaration"
     }
 
     fn match_construct_nodes(&self) -> &[&str] {
-        &["expression_switch_statement", "type_switch_statement", "select_statement"]
+        &[
+            "expression_switch_statement",
+            "type_switch_statement",
+            "select_statement",
+        ]
     }
 
     fn match_arm_nodes(&self) -> &[&str] {
-        &["expression_case", "default_case", "type_case", "communication_case"]
+        &[
+            "expression_case",
+            "default_case",
+            "type_case",
+            "communication_case",
+        ]
     }
 }

@@ -1,6 +1,6 @@
 # Arborist
 
-Multi-language code complexity metrics powered by [tree-sitter](https://tree-sitter.github.io/).
+Multi-language code complexity metrics powered by [arborium](https://crates.io/crates/arborium).
 
 Arborist computes **cognitive complexity** (SonarSource), **cyclomatic complexity**
 (McCabe), and **source lines of code** (SLOC) for functions and methods across
@@ -25,36 +25,36 @@ Arborist computes **cognitive complexity** (SonarSource), **cyclomatic complexit
 
 ## Feature Flags
 
-Arborist uses **Cargo feature flags** to control which tree-sitter grammars
-are compiled. Each language is an independent, optional feature that pulls in
-its corresponding tree-sitter grammar crate.
+Arborist uses **Cargo feature flags** to control which arborium grammars are
+compiled. Each language is an independent, optional feature that enables the
+corresponding `arborium/lang-*` feature.
 
 **To enable all 12 languages, use `features = ["all"]`.**
 
 ### Tiers
 
 - **Tier 1 (default):** Rust, Python, JavaScript, TypeScript, Java, Go --
-  the most mature tree-sitter grammars. Enabled automatically unless you
+  enabled automatically unless you
   set `default-features = false`.
 - **Tier 2 (opt-in):** C#, C++, C, PHP, Kotlin, Swift -- require enabling
   their feature flag explicitly or using the `all` composite feature.
 
 ### Individual features
 
-| Feature flag | Language | Tier | tree-sitter crate |
-|-------------|----------|------|-------------------|
-| `rust` | Rust | 1 | `tree-sitter-rust` |
-| `python` | Python | 1 | `tree-sitter-python` |
-| `javascript` | JavaScript | 1 | `tree-sitter-javascript` |
-| `typescript` | TypeScript | 1 | `tree-sitter-typescript` |
-| `java` | Java | 1 | `tree-sitter-java` |
-| `go` | Go | 1 | `tree-sitter-go` |
-| `csharp` | C# | 2 | `tree-sitter-c-sharp` |
-| `cpp` | C++ | 2 | `tree-sitter-cpp` |
-| `c` | C | 2 | `tree-sitter-c` |
-| `php` | PHP | 2 | `tree-sitter-php` |
-| `kotlin` | Kotlin | 2 | `tree-sitter-kotlin-ng` |
-| `swift` | Swift | 2 | `tree-sitter-swift` |
+| Feature flag | Language | Tier | arborium feature(s) |
+|-------------|----------|------|---------------------|
+| `rust` | Rust | 1 | `lang-rust` |
+| `python` | Python | 1 | `lang-python` |
+| `javascript` | JavaScript | 1 | `lang-javascript` |
+| `typescript` | TypeScript | 1 | `lang-typescript`, `lang-tsx` |
+| `java` | Java | 1 | `lang-java` |
+| `go` | Go | 1 | `lang-go` |
+| `csharp` | C# | 2 | `lang-c-sharp` |
+| `cpp` | C++ | 2 | `lang-cpp` |
+| `c` | C | 2 | `lang-c` |
+| `php` | PHP | 2 | `lang-php` |
+| `kotlin` | Kotlin | 2 | `lang-kotlin` |
+| `swift` | Swift | 2 | `lang-swift` |
 
 ### Composite features
 
@@ -195,8 +195,8 @@ Physical source lines of code, excluding blank lines and comment-only lines.
 ### Adding a new language
 
 1. Create `src/languages/<lang>.rs` implementing the `LanguageProfile` trait
-2. Add the grammar crate as an optional dependency in `Cargo.toml`
-3. Add a feature flag and wire up detection in `src/languages/mod.rs`
+2. Add an `arborium/lang-<lang>` feature mapping in `Cargo.toml`
+3. Wire up the feature and extension detection in `src/languages/mod.rs`
 4. Create 6 test fixtures in `tests/fixtures/<lang>/`
 5. Write integration tests
 

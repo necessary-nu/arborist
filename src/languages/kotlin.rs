@@ -48,23 +48,28 @@ impl LanguageProfile for KotlinProfile {
 
     fn extract_function_name(
         &self,
-        node: &tree_sitter::Node,
+        node: &arborium::tree_sitter::Node,
         source: &[u8],
     ) -> Option<String> {
         node.child_by_field_name("name")
+            .or_else(|| {
+                let mut cursor = node.walk();
+                node.children(&mut cursor)
+                    .find(|child| child.kind() == "simple_identifier")
+            })
             .and_then(|n| n.utf8_text(source).ok())
             .map(|s| s.to_string())
     }
 
-    fn parser_language(&self) -> tree_sitter::Language {
-        tree_sitter_kotlin_ng::LANGUAGE.into()
+    fn parser_language(&self) -> arborium::tree_sitter::Language {
+        arborium::lang_kotlin::language().into()
     }
 
     fn extensions(&self) -> &[&str] {
         &[".kt", ".kts"]
     }
 
-    fn is_method(&self, node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, node: &arborium::tree_sitter::Node) -> bool {
         let mut current = node.parent();
         while let Some(parent) = current {
             if parent.kind() == "class_body" {
@@ -73,6 +78,10 @@ impl LanguageProfile for KotlinProfile {
             current = parent.parent();
         }
         false
+    }
+
+    fn boolean_expression_nodes(&self) -> &[&str] {
+        &["conjunction_expression", "disjunction_expression"]
     }
 
     fn match_construct_nodes(&self) -> &[&str] {

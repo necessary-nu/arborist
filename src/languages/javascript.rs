@@ -41,7 +41,11 @@ impl LanguageProfile for JavaScriptProfile {
     }
 
     fn lambda_nodes(&self) -> &[&str] {
-        &["arrow_function", "function_expression", "generator_function"]
+        &[
+            "arrow_function",
+            "function_expression",
+            "generator_function",
+        ]
     }
 
     fn comment_nodes(&self) -> &[&str] {
@@ -50,7 +54,7 @@ impl LanguageProfile for JavaScriptProfile {
 
     fn extract_function_name(
         &self,
-        node: &tree_sitter::Node,
+        node: &arborium::tree_sitter::Node,
         source: &[u8],
     ) -> Option<String> {
         node.child_by_field_name("name")
@@ -58,15 +62,15 @@ impl LanguageProfile for JavaScriptProfile {
             .map(|s| s.to_string())
     }
 
-    fn parser_language(&self) -> tree_sitter::Language {
-        tree_sitter_javascript::LANGUAGE.into()
+    fn parser_language(&self) -> arborium::tree_sitter::Language {
+        arborium::lang_javascript::language().into()
     }
 
     fn extensions(&self) -> &[&str] {
         &[".js", ".jsx", ".mjs", ".cjs"]
     }
 
-    fn is_method(&self, node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, node: &arborium::tree_sitter::Node) -> bool {
         let mut current = node.parent();
         while let Some(parent) = current {
             if parent.kind() == "class_body" {

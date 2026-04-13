@@ -1,20 +1,24 @@
 //! Dump AST node types for all supported languages.
 //! Run with: cargo run --example dump_ast --features all
 
+use arborium::tree_sitter;
+
 fn print_tree(node: &tree_sitter::Node, source: &[u8], indent: usize) {
     let prefix = " ".repeat(indent);
     let text = node.utf8_text(source).unwrap_or("<binary>");
     let short_text: String = text.chars().take(60).collect();
     let field = node.parent().and_then(|p| {
-        (0..p.child_count()).find_map(|i| {
+        (0..p.child_count() as u32).find_map(|i| {
             if p.child(i).map(|c| c.id()) == Some(node.id()) {
-                p.field_name_for_child(i as u32)
+                p.field_name_for_child(i)
             } else {
                 None
             }
         })
     });
-    let field_str = field.map(|f| format!(" [field: {}]", f)).unwrap_or_default();
+    let field_str = field
+        .map(|f| format!(" [field: {}]", f))
+        .unwrap_or_default();
     println!(
         "{}{} ({}){}  | {}",
         prefix,
@@ -44,7 +48,7 @@ fn main() {
     #[cfg(feature = "python")]
     parse_and_dump(
         "Python",
-        tree_sitter_python::LANGUAGE.into(),
+        arborium::lang_python::language().into(),
         r#"
 def foo(x):
     if x > 0:
@@ -71,7 +75,7 @@ class MyClass:
     #[cfg(feature = "javascript")]
     parse_and_dump(
         "JavaScript",
-        tree_sitter_javascript::LANGUAGE.into(),
+        arborium::lang_javascript::language().into(),
         r#"
 function foo(x) {
     if (x > 0) {
@@ -105,7 +109,7 @@ class MyClass {
     #[cfg(feature = "typescript")]
     parse_and_dump(
         "TypeScript",
-        tree_sitter_typescript::LANGUAGE_TYPESCRIPT.into(),
+        arborium::lang_typescript::language().into(),
         r#"
 function foo(x: number): number {
     if (x > 0) {
@@ -131,7 +135,7 @@ class MyClass {
     #[cfg(feature = "java")]
     parse_and_dump(
         "Java",
-        tree_sitter_java::LANGUAGE.into(),
+        arborium::lang_java::language().into(),
         r#"
 class MyClass {
     int foo(int x) {
@@ -159,7 +163,7 @@ class MyClass {
     #[cfg(feature = "csharp")]
     parse_and_dump(
         "C#",
-        tree_sitter_c_sharp::LANGUAGE.into(),
+        arborium::lang_c_sharp::language().into(),
         r#"
 class MyClass {
     int Foo(int x) {
@@ -190,7 +194,7 @@ class MyClass {
     #[cfg(feature = "cpp")]
     parse_and_dump(
         "C++",
-        tree_sitter_cpp::LANGUAGE.into(),
+        arborium::lang_cpp::language().into(),
         r#"
 class MyClass {
 public:
@@ -219,7 +223,7 @@ public:
     #[cfg(feature = "c")]
     parse_and_dump(
         "C",
-        tree_sitter_c::LANGUAGE.into(),
+        arborium::lang_c::language().into(),
         r#"
 int foo(int x) {
     if (x > 0) {
@@ -247,7 +251,7 @@ int foo(int x) {
     #[cfg(feature = "go")]
     parse_and_dump(
         "Go",
-        tree_sitter_go::LANGUAGE.into(),
+        arborium::lang_go::language().into(),
         r#"
 package main
 
@@ -280,7 +284,7 @@ func (m *MyStruct) Method() {}
     #[cfg(feature = "php")]
     parse_and_dump(
         "PHP",
-        tree_sitter_php::LANGUAGE_PHP.into(),
+        arborium::lang_php::language().into(),
         r#"<?php
 function foo($x) {
     if ($x > 0) {

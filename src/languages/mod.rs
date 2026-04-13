@@ -1,4 +1,4 @@
-//! Language profiles for tree-sitter grammars.
+//! Language profiles for arborium-backed tree-sitter grammars.
 //!
 //! Each language module is gated behind a Cargo feature flag. By default,
 //! **Tier 1** languages are enabled: Rust, Python, JavaScript, TypeScript,
@@ -12,30 +12,30 @@
 use crate::error::ArboristError;
 use crate::types::Language;
 
-#[cfg(feature = "rust")]
-pub mod rust;
-#[cfg(feature = "python")]
-pub mod python;
-#[cfg(feature = "javascript")]
-pub mod javascript;
-#[cfg(feature = "typescript")]
-pub mod typescript;
-#[cfg(feature = "java")]
-pub mod java;
-#[cfg(feature = "csharp")]
-pub mod csharp;
-#[cfg(feature = "cpp")]
-pub mod cpp;
 #[cfg(feature = "c")]
 pub mod c;
+#[cfg(feature = "cpp")]
+pub mod cpp;
+#[cfg(feature = "csharp")]
+pub mod csharp;
 #[cfg(feature = "go")]
 pub mod go;
-#[cfg(feature = "php")]
-pub mod php;
+#[cfg(feature = "java")]
+pub mod java;
+#[cfg(feature = "javascript")]
+pub mod javascript;
 #[cfg(feature = "kotlin")]
 pub mod kotlin;
+#[cfg(feature = "php")]
+pub mod php;
+#[cfg(feature = "python")]
+pub mod python;
+#[cfg(feature = "rust")]
+pub mod rust;
 #[cfg(feature = "swift")]
 pub mod swift;
+#[cfg(feature = "typescript")]
+pub mod typescript;
 
 /// Trait that defines how a language's AST maps to control-flow concepts.
 ///
@@ -48,16 +48,16 @@ pub mod swift;
 ///
 /// 1. Create `src/languages/<lang>.rs` with a unit struct (e.g., `pub struct LuaProfile;`).
 /// 2. Implement every method of `LanguageProfile`:
-///    - Return AST node-type strings that match the tree-sitter grammar for
+///    - Return AST node-type strings that match the underlying tree-sitter grammar for
 ///      your language. Inspect the grammar with `tree-sitter parse` on sample
 ///      files to discover the correct node types.
-///    - `parser_language()` should return the `tree_sitter::Language` from the
-///      grammar crate (e.g., `tree_sitter_lua::LANGUAGE.into()`).
+///    - `parser_language()` should return the `tree_sitter::Language` from
+///      arborium (e.g., `arborium::lang_lua::language().into()`).
 ///    - `extensions()` should list all file extensions for auto-detection.
 ///    - `is_method()` should return `true` for function nodes that represent
 ///      methods inside a class, struct, or impl block.
-/// 3. Add the grammar crate as an optional dependency in `Cargo.toml`.
-/// 4. Add a feature flag mapping in `[features]` (e.g., `lua = ["dep:tree-sitter-lua"]`).
+/// 3. Add the arborium language feature mapping in `[features]`
+///    (e.g., `lua = ["arborium/lang-lua"]`).
 /// 5. Gate the module with `#[cfg(feature = "lua")]` in this file and add a
 ///    match arm in `profile_for_extension` and `profile_for_language`.
 /// 6. Create 6 test fixtures in `tests/fixtures/<lang>/` and integration tests.
@@ -86,18 +86,18 @@ pub trait LanguageProfile {
     /// Extract the function name from an AST node.
     fn extract_function_name(
         &self,
-        node: &tree_sitter::Node,
+        node: &arborium::tree_sitter::Node,
         source: &[u8],
     ) -> Option<String>;
 
     /// Get the tree-sitter `Language` for parsing.
-    fn parser_language(&self) -> tree_sitter::Language;
+    fn parser_language(&self) -> arborium::tree_sitter::Language;
 
     /// File extensions associated with this language.
     fn extensions(&self) -> &[&str];
 
     /// Whether a function node represents a method (inside a class/impl block).
-    fn is_method(&self, node: &tree_sitter::Node) -> bool;
+    fn is_method(&self, node: &arborium::tree_sitter::Node) -> bool;
 
     /// AST node types that contain boolean operator children (e.g., `binary_expression`
     /// for C-like languages, `boolean_operator` for Python). Used by cognitive complexity
@@ -135,9 +135,16 @@ pub trait LanguageProfile {
 ///
 /// Returns `Err(UnrecognizedExtension)` if the extension is unknown, or
 /// `Err(LanguageNotEnabled)` if the language is known but its feature is off.
-pub fn profile_for_extension(ext: &str) -> Result<(Language, Box<dyn LanguageProfile>), ArboristError> {
+pub fn profile_for_extension(
+    ext: &str,
+) -> Result<(Language, Box<dyn LanguageProfile>), ArboristError> {
     let ext_lower = ext.to_lowercase();
     let ext_ref = ext_lower.as_str();
+
+    #[cfg(feature = "typescript")]
+    if ext_ref == "tsx" {
+        return Ok((Language::TypeScript, Box::new(typescript::TsxProfile)));
+    }
 
     // First, identify which language this extension belongs to
     let language = match ext_ref {
@@ -166,7 +173,9 @@ pub fn profile_for_extension(ext: &str) -> Result<(Language, Box<dyn LanguagePro
 /// Get the profile for a known language.
 ///
 /// Returns `Err(LanguageNotEnabled)` if the feature flag is not compiled in.
-pub fn profile_for_language(language: Language) -> Result<(Language, Box<dyn LanguageProfile>), ArboristError> {
+pub fn profile_for_language(
+    language: Language,
+) -> Result<(Language, Box<dyn LanguageProfile>), ArboristError> {
     let profile: Box<dyn LanguageProfile> = match language {
         #[cfg(feature = "rust")]
         Language::Rust => Box::new(rust::RustProfile),

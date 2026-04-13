@@ -20,7 +20,12 @@ impl LanguageProfile for PythonProfile {
     }
 
     fn nesting_nodes(&self) -> &[&str] {
-        &["if_statement", "for_statement", "while_statement", "match_statement"]
+        &[
+            "if_statement",
+            "for_statement",
+            "while_statement",
+            "match_statement",
+        ]
     }
 
     fn boolean_operators(&self) -> &[&str] {
@@ -41,7 +46,7 @@ impl LanguageProfile for PythonProfile {
 
     fn extract_function_name(
         &self,
-        node: &tree_sitter::Node,
+        node: &arborium::tree_sitter::Node,
         source: &[u8],
     ) -> Option<String> {
         node.child_by_field_name("name")
@@ -49,15 +54,15 @@ impl LanguageProfile for PythonProfile {
             .map(|s| s.to_string())
     }
 
-    fn parser_language(&self) -> tree_sitter::Language {
-        tree_sitter_python::LANGUAGE.into()
+    fn parser_language(&self) -> arborium::tree_sitter::Language {
+        arborium::lang_python::language().into()
     }
 
     fn extensions(&self) -> &[&str] {
         &[".py", ".pyi"]
     }
 
-    fn is_method(&self, node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, node: &arborium::tree_sitter::Node) -> bool {
         let mut current = node.parent();
         while let Some(parent) = current {
             if parent.kind() == "class_definition" {

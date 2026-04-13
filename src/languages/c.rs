@@ -2,7 +2,10 @@ use crate::languages::LanguageProfile;
 
 /// Recursively find a `function_declarator` inside a node tree
 /// (handles pointer_declarator, reference_declarator wrappers).
-fn find_function_declarator_name(node: &tree_sitter::Node, source: &[u8]) -> Option<String> {
+fn find_function_declarator_name(
+    node: &arborium::tree_sitter::Node,
+    source: &[u8],
+) -> Option<String> {
     let mut cursor = node.walk();
     for child in node.children(&mut cursor) {
         if child.kind() == "function_declarator" {
@@ -68,21 +71,21 @@ impl LanguageProfile for CProfile {
 
     fn extract_function_name(
         &self,
-        node: &tree_sitter::Node,
+        node: &arborium::tree_sitter::Node,
         source: &[u8],
     ) -> Option<String> {
         find_function_declarator_name(node, source)
     }
 
-    fn parser_language(&self) -> tree_sitter::Language {
-        tree_sitter_c::LANGUAGE.into()
+    fn parser_language(&self) -> arborium::tree_sitter::Language {
+        arborium::lang_c::language().into()
     }
 
     fn extensions(&self) -> &[&str] {
         &[".c", ".h"]
     }
 
-    fn is_method(&self, _node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, _node: &arborium::tree_sitter::Node) -> bool {
         false
     }
 

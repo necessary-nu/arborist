@@ -50,7 +50,7 @@ impl LanguageProfile for SwiftProfile {
 
     fn extract_function_name(
         &self,
-        node: &tree_sitter::Node,
+        node: &arborium::tree_sitter::Node,
         source: &[u8],
     ) -> Option<String> {
         node.child_by_field_name("name")
@@ -58,15 +58,15 @@ impl LanguageProfile for SwiftProfile {
             .map(|s| s.to_string())
     }
 
-    fn parser_language(&self) -> tree_sitter::Language {
-        tree_sitter_swift::LANGUAGE.into()
+    fn parser_language(&self) -> arborium::tree_sitter::Language {
+        arborium::lang_swift::language().into()
     }
 
     fn extensions(&self) -> &[&str] {
         &[".swift"]
     }
 
-    fn is_method(&self, node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, node: &arborium::tree_sitter::Node) -> bool {
         let mut current = node.parent();
         while let Some(parent) = current {
             if parent.kind() == "class_body" {

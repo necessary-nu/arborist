@@ -3,7 +3,7 @@ pub mod cyclomatic;
 pub mod loc;
 
 use crate::languages::LanguageProfile;
-use tree_sitter::Node;
+use arborium::tree_sitter::Node;
 
 /// Result of computing all three metrics for a function node.
 pub struct MetricsResult {

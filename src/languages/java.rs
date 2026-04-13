@@ -50,7 +50,7 @@ impl LanguageProfile for JavaProfile {
 
     fn extract_function_name(
         &self,
-        node: &tree_sitter::Node,
+        node: &arborium::tree_sitter::Node,
         source: &[u8],
     ) -> Option<String> {
         node.child_by_field_name("name")
@@ -58,15 +58,15 @@ impl LanguageProfile for JavaProfile {
             .map(|s| s.to_string())
     }
 
-    fn parser_language(&self) -> tree_sitter::Language {
-        tree_sitter_java::LANGUAGE.into()
+    fn parser_language(&self) -> arborium::tree_sitter::Language {
+        arborium::lang_java::language().into()
     }
 
     fn extensions(&self) -> &[&str] {
         &[".java"]
     }
 
-    fn is_method(&self, _node: &tree_sitter::Node) -> bool {
+    fn is_method(&self, _node: &arborium::tree_sitter::Node) -> bool {
         true
     }
 

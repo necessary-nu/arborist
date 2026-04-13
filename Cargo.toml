@@ -2,10 +2,10 @@
 name = "arborist-metrics"
 version = "0.1.2"
 edition = "2024"
-description = "Multi-language code complexity metrics (cognitive, cyclomatic, SLOC) powered by tree-sitter"
+description = "Multi-language code complexity metrics (cognitive, cyclomatic, SLOC) powered by arborium"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/StrangeDaysTech/arborist"
-keywords = ["complexity", "cognitive", "cyclomatic", "tree-sitter", "metrics"]
+keywords = ["complexity", "cognitive", "cyclomatic", "arborium", "metrics"]
 categories = ["development-tools"]
 exclude = [
     ".agent/",
@@ -29,23 +29,7 @@ name = "arborist"
 
 [dependencies]
 serde = { version = "1", features = ["derive"] }
-tree-sitter = "0.25"
-
-# Tier 1 grammar crates (all optional, gated by feature flags)
-tree-sitter-rust = { version = "0.23", optional = true }
-tree-sitter-python = { version = "0.23", optional = true }
-tree-sitter-javascript = { version = "0.23", optional = true }
-tree-sitter-typescript = { version = "0.23", optional = true }
-tree-sitter-java = { version = "0.23", optional = true }
-tree-sitter-c-sharp = { version = "0.23", optional = true }
-tree-sitter-cpp = { version = "0.23", optional = true }
-tree-sitter-c = { version = "0.23", optional = true }
-tree-sitter-go = { version = "0.23", optional = true }
-tree-sitter-php = { version = "0.23", optional = true }
-
-# Tier 2 grammar crates
-tree-sitter-kotlin-ng = { version = "1.1", optional = true }
-tree-sitter-swift = { version = "0.7", optional = true }
+arborium = { version = "2.16", default-features = false }
 
 [dev-dependencies]
 serde_json = "1"
@@ -55,18 +39,18 @@ default = ["rust", "python", "javascript", "typescript", "java", "go"]
 all = ["default", "csharp", "cpp", "c", "php", "kotlin", "swift"]
 
 # Individual language features
-rust = ["dep:tree-sitter-rust"]
-python = ["dep:tree-sitter-python"]
-javascript = ["dep:tree-sitter-javascript"]
-typescript = ["dep:tree-sitter-typescript"]
-java = ["dep:tree-sitter-java"]
-csharp = ["dep:tree-sitter-c-sharp"]
-cpp = ["dep:tree-sitter-cpp"]
-c = ["dep:tree-sitter-c"]
-go = ["dep:tree-sitter-go"]
-php = ["dep:tree-sitter-php"]
-kotlin = ["dep:tree-sitter-kotlin-ng"]
-swift = ["dep:tree-sitter-swift"]
+rust = ["arborium/lang-rust"]
+python = ["arborium/lang-python"]
+javascript = ["arborium/lang-javascript"]
+typescript = ["arborium/lang-typescript", "arborium/lang-tsx"]
+java = ["arborium/lang-java"]
+csharp = ["arborium/lang-c-sharp"]
+cpp = ["arborium/lang-cpp"]
+c = ["arborium/lang-c"]
+go = ["arborium/lang-go"]
+php = ["arborium/lang-php"]
+kotlin = ["arborium/lang-kotlin"]
+swift = ["arborium/lang-swift"]
 
 [package.metadata.docs.rs]
 all-features = true
