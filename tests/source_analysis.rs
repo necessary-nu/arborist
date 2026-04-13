@@ -182,10 +182,10 @@ fn source_python_two_functions() {
 
 #[test]
 fn source_syntax_error_best_effort() {
-    // Malformed Rust code — tree-sitter still produces a partial AST
+    // Malformed Rust code — the arborium-backed parser still produces a partial AST
     let source = "fn broken( { if true { } }";
     let result = analyze_source(source, Language::Rust);
-    // tree-sitter is error-tolerant; it should not fail but produce best-effort results
+    // The underlying parser is error-tolerant; it should not fail but produce best-effort results
     assert!(
         result.is_ok(),
         "syntax errors should produce best-effort results, got: {:?}",

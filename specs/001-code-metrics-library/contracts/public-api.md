@@ -153,4 +153,4 @@ pub use languages::LanguageProfile; // For consumers adding custom languages (fu
 - `walker.rs` internals
 - `metrics/cognitive.rs`, `metrics/cyclomatic.rs`, `metrics/loc.rs` internals
 - Individual `LanguageProfile` implementations (e.g., `languages::rust::RustProfile`)
-- tree-sitter types are not exposed in the public API
+- `arborium::tree_sitter` types are not exposed in the public API

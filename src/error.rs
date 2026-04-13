@@ -43,7 +43,7 @@ pub enum ArboristError {
     /// arborist-metrics = { version = "0.1", features = ["kotlin"] }
     /// ```
     LanguageNotEnabled { language: String },
-    /// The arborium parser failed to parse the source (rare due to tree-sitter error tolerance).
+    /// The arborium parser failed to parse the source (rare due to the underlying parser's error tolerance).
     ParseError { details: String },
     /// Underlying I/O error.
     ///

@@ -3,6 +3,8 @@
 **Input**: Design documents from `/specs/001-code-metrics-library/`
 **Prerequisites**: plan.md, spec.md, research.md, data-model.md, contracts/public-api.md
 
+> Historical note (2026-04-13): These tasks reflect the original implementation history, including direct `tree-sitter` dependency work. The current crate now uses `arborium` for parser integration; completed tasks below should be read as historical milestones, not the current dependency graph.
+
 **Tests**: Required by project constitution (Principle VI: Test-First, Fixture-Driven).
 
 **Organization**: Tasks grouped by user story. Each language profile includes both fixtures (tests) and implementation per TDD mandate.

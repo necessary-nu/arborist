@@ -3,6 +3,8 @@
 **Branch**: `001-code-metrics-library` | **Date**: 2026-03-27 | **Spec**: [spec.md](spec.md)
 **Input**: Feature specification from `/specs/001-code-metrics-library/spec.md`
 
+> Historical note (2026-04-13): This plan reflects the original implementation direction using direct `tree-sitter` crates. The live code now uses `arborium` as the parser integration layer while keeping the same public Arborist API. Historical references below are retained for traceability.
+
 ## Summary
 
 Arborist is an independent Rust crate that computes cognitive complexity, cyclomatic complexity, and SLOC for source code across 10 programming languages. It uses tree-sitter as the single parsing foundation. Each language is added by implementing a `LanguageProfile` trait, and languages are gated by compile-time feature flags. The library exposes two primary entry points: `analyze_file()` (auto-detects language from extension) and `analyze_source()` (explicit language).

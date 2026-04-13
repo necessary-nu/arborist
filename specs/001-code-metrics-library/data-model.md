@@ -48,18 +48,18 @@ Represents the analysis results for a complete source file.
 
 Enum representing supported programming languages.
 
-| Variant | Extensions | Grammar Crate | Feature Flag |
-|---------|------------|---------------|-------------|
-| `Rust` | `.rs` | `tree-sitter-rust` | `rust` |
-| `Python` | `.py`, `.pyi` | `tree-sitter-python` | `python` |
-| `JavaScript` | `.js`, `.jsx`, `.mjs`, `.cjs` | `tree-sitter-javascript` | `javascript` |
-| `TypeScript` | `.ts`, `.tsx`, `.mts`, `.cts` | `tree-sitter-typescript` | `typescript` |
-| `Java` | `.java` | `tree-sitter-java` | `java` |
-| `CSharp` | `.cs` | `tree-sitter-c-sharp` | `csharp` |
-| `Cpp` | `.cpp`, `.cc`, `.cxx`, `.hpp`, `.hxx`, `.hh` | `tree-sitter-cpp` | `cpp` |
-| `C` | `.c`, `.h` | `tree-sitter-c` | `c` |
-| `Go` | `.go` | `tree-sitter-go` | `go` |
-| `Php` | `.php` | `tree-sitter-php` | `php` |
+| Variant | Extensions | Arborium Binding(s) | Feature Flag |
+|---------|------------|---------------------|-------------|
+| `Rust` | `.rs` | `arborium-rust` | `rust` |
+| `Python` | `.py`, `.pyi` | `arborium-python` | `python` |
+| `JavaScript` | `.js`, `.jsx`, `.mjs`, `.cjs` | `arborium-javascript` | `javascript` |
+| `TypeScript` | `.ts`, `.tsx`, `.mts`, `.cts` | `arborium-typescript`, `arborium-tsx` | `typescript` |
+| `Java` | `.java` | `arborium-java` | `java` |
+| `CSharp` | `.cs` | `arborium-c-sharp` | `csharp` |
+| `Cpp` | `.cpp`, `.cc`, `.cxx`, `.hpp`, `.hxx`, `.hh` | `arborium-cpp` | `cpp` |
+| `C` | `.c`, `.h` | `arborium-c` | `c` |
+| `Go` | `.go` | `arborium-go` | `go` |
+| `Php` | `.php` | `arborium-php` | `php` |
 
 **Extension conflict**: `.h` defaults to C. Users needing C++ analysis for `.h` files should use `analyze_source()` with explicit `Language::Cpp`.
 
@@ -94,7 +94,7 @@ Extension point for adding new language support. Not a data entity — it's a be
 | `lambda_nodes()` | `&[&str]` | Closure/lambda nodes (increment nesting) |
 | `comment_nodes()` | `&[&str]` | Comment nodes (for SLOC exclusion) |
 | `extract_function_name(node, source)` | `Option<String>` | Extract function name from AST node |
-| `parser_language()` | `tree_sitter::Language` | Get the tree-sitter parser language |
+| `parser_language()` | `arborium::tree_sitter::Language` | Get the parser language via arborium's tree-sitter re-export |
 | `extensions()` | `&[&str]` | File extensions for this language |
 | `is_method(node)` | `bool` | Whether a function node represents a method (inside a class/impl block). Used by `include_methods` filtering (FR-018). |
 
@@ -108,7 +108,7 @@ Extension point for adding new language support. Not a data entity — it's a be
 | `UnsupportedLanguage` | `language: String` | Language identifier not recognized |
 | `UnrecognizedExtension` | `extension: String` | File extension doesn't map to any known language |
 | `LanguageNotEnabled` | `language: String` | Language recognized but its feature flag is not compiled in |
-| `ParseError` | `details: String` | tree-sitter parse failure (rare) |
+| `ParseError` | `details: String` | arborium-backed parse failure (rare) |
 | `Io` | `std::io::Error` | Underlying I/O error |
 
 ## Relationships

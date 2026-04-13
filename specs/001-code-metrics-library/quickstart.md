@@ -5,9 +5,13 @@
 ## Prerequisites
 
 - Rust toolchain (edition 2024)
-- C compiler (required by tree-sitter grammar crates for native compilation)
+- C compiler (required by arborium language bindings for native compilation)
 
 ## Add to your project
+
+Arborist's public feature flags map to `arborium/lang-*` features internally.
+The `typescript` feature enables both `lang-typescript` and `lang-tsx` so `.ts`
+and `.tsx` files continue to share the same `Language::TypeScript` API.
 
 ```toml
 # Cargo.toml — default features (Rust, Python, JS, TS, Java, Go)
@@ -101,19 +105,19 @@ Per the project constitution, development follows test-first, fixture-driven wor
 
 ## Feature flags reference
 
-| Flag | Languages |
-|------|-----------|
-| `default` | Rust, Python, JavaScript, TypeScript, Java, Go |
-| `all` | All 12 languages (Tier 1 + Tier 2) |
-| `rust` | Rust only |
-| `python` | Python only |
-| `javascript` | JavaScript + JSX |
-| `typescript` | TypeScript + TSX |
-| `java` | Java |
-| `csharp` | C# |
-| `cpp` | C++ |
-| `c` | C |
-| `go` | Go |
-| `php` | PHP |
-| `kotlin` | Kotlin + Kotlin Script |
-| `swift` | Swift |
+| Flag | Languages | Internal arborium feature(s) |
+|------|-----------|-------------------------------|
+| `default` | Rust, Python, JavaScript, TypeScript, Java, Go | Composite |
+| `all` | All 12 languages (Tier 1 + Tier 2) | Composite |
+| `rust` | Rust only | `lang-rust` |
+| `python` | Python only | `lang-python` |
+| `javascript` | JavaScript + JSX | `lang-javascript` |
+| `typescript` | TypeScript + TSX | `lang-typescript`, `lang-tsx` |
+| `java` | Java | `lang-java` |
+| `csharp` | C# | `lang-c-sharp` |
+| `cpp` | C++ | `lang-cpp` |
+| `c` | C | `lang-c` |
+| `go` | Go | `lang-go` |
+| `php` | PHP | `lang-php` |
+| `kotlin` | Kotlin + Kotlin Script | `lang-kotlin` |
+| `swift` | Swift | `lang-swift` |

@@ -32,5 +32,5 @@
 ## Notes
 
 - All items pass validation. The spec is ready for `/speckit.clarify` or `/speckit.plan`.
-- The spec references "tree-sitter" and "crates.io" as domain context (what the product IS), not as implementation choices. These are product-level decisions documented in the project's architecture, not specification leaks.
+- The original spec references "tree-sitter" and "crates.io" as domain context from the initial planning phase. The implemented crate now uses `arborium` as the parser integration layer, and the historical references are retained for traceability rather than as current implementation guidance.
 - The SonarSource cognitive complexity paper is referenced as a behavioral specification (defining WHAT the metrics mean), not an implementation detail.

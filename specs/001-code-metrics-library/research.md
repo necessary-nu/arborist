@@ -2,6 +2,8 @@
 
 **Branch**: `001-code-metrics-library` | **Date**: 2026-03-27
 
+> Historical note (2026-04-13): This research document captures the original dependency validation against direct `tree-sitter` grammar crates. The implemented crate now depends on `arborium`, which re-exports the parser types and bundles the language bindings used by Arborist. Treat the dependency/version tables in R1 and R6 as historical context.
+
 ## R1: tree-sitter 0.25 Compatibility with Grammar Crates
 
 **Decision**: Use tree-sitter 0.25 as the parsing foundation with the following verified grammar crates.

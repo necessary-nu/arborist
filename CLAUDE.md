@@ -53,8 +53,8 @@ Do not capture PII, tokens, or secrets in OTel attributes or logs. Record instru
 *DevTrail | [Strange Days Tech](https://strangedays.tech) — Because every change tells a story.*
 
 ## Active Technologies
-- Rust (edition 2024, MSRV to be determined by tree-sitter 0.25 requirements) + tree-sitter 0.25, serde (serialization), 12 tree-sitter grammar crates (10 Tier 1 + Kotlin, Swift) (001-code-metrics-library)
+- Rust (edition 2024, MSRV aligned with arborium 2.16 / underlying tree-sitter bindings) + arborium 2.16, serde (serialization), 12 arborium language bindings (TypeScript + TSX, Kotlin, Swift included) (001-code-metrics-library)
 - N/A (pure computation library, reads files via `std::fs`) (001-code-metrics-library)
 
 ## Recent Changes
-- 001-code-metrics-library: Added Kotlin and Swift (Tier 2) via tree-sitter-kotlin-ng 1.1 and tree-sitter-swift 0.7, expanding to 12 languages
+- 001-code-metrics-library: Migrated parser integration from direct tree-sitter crates to arborium, preserving the 12-language API and adding explicit TSX grammar coverage under the `typescript` feature

@@ -5,6 +5,8 @@
 **Status**: Implemented
 **Input**: User description: "Librería independiente de análisis de métricas de código (complejidad cognitiva, ciclomática, SLOC) usando tree-sitter para múltiples lenguajes"
 
+> Historical note (2026-04-13): This specification records the original feature request and planning language. The current implementation uses `arborium` as the parser integration layer, preserves the 12-language public API, and maps the `typescript` feature to both the TypeScript and TSX grammars. References below to direct `tree-sitter` dependencies are historical unless explicitly updated elsewhere.
+
 ## Clarifications
 
 ### Session 2026-03-27
